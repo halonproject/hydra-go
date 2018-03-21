@@ -1,5 +1,8 @@
 # hydra-go
 
+[![CircleCI](https://circleci.com/gh/HalonProject/hydra-go.svg?style=svg)](https://circleci.com/gh/HalonProject/hydra-go)
+[![Coverage Status](https://coveralls.io/repos/github/HalonProject/hydra-go/badge.svg)](https://coveralls.io/github/HalonProject/hydra-go)
+
 Golang implementation of `hydra` which is a library for producing and consuming
 messages from multiple subscribed topics on IPFS. Currently on consumption is allowed
 since the `go-ipfs-api` does not seems to support producing messages.
