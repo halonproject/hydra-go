@@ -5,3 +5,11 @@ type Config struct {
 	IPFSPort string
 	Topics   []string
 }
+
+func DefaultConfig() *Config {
+	return &Config{
+		IPFSAddr: "localhost",
+		IPFSPort: "5001",
+		Topics:   []string{},
+	}
+}

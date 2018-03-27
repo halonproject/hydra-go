@@ -4,16 +4,17 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	ipfs "github.com/ipfs/go-ipfs-api"
 )
 
 type Consumer struct {
-	events       chan Event
-	topics       []string
-	conn         *ipfs.Shell
-	subscription *ipfs.PubSubSubscription
+	events        chan Event
+	topics        []string
+	conn          *ipfs.Shell
+	subscriptions map[string]*ipfs.PubSubSubscription
 }
 
 func NewConsumer(config *Config) (*Consumer, error) {
@@ -22,7 +23,7 @@ func NewConsumer(config *Config) (*Consumer, error) {
 
 	shell := ipfs.NewShell(dsn)
 	consumer.conn = shell
-	consumer.subscription = &ipfs.PubSubSubscription{}
+	consumer.subscriptions = make(map[string]*ipfs.PubSubSubscription)
 	consumer.topics = config.Topics
 	consumer.events = make(chan Event)
 
@@ -34,7 +35,15 @@ func (c *Consumer) Subscribe(topic string) error {
 }
 
 func (c *Consumer) SubscribeTopics(topics []string) error {
-	c.topics = append(c.topics, topics...)
+	for _, topic := range topics {
+		c.topics = append(c.topics, topic)
+		subscription, err := c.conn.PubSubSubscribe(topic)
+		if err != nil {
+			return err
+		}
+		c.subscriptions[topic] = subscription
+	}
+
 	return nil
 }
 
@@ -48,6 +57,9 @@ func (c *Consumer) UnsubscribeTopics(topics []string) error {
 		for _, ctopic := range c.topics {
 			if topic != ctopic {
 				newTopics = append(newTopics, ctopic)
+			} else {
+				c.subscriptions[topic].Cancel()
+				delete(c.subscriptions, topic)
 			}
 		}
 	}
@@ -57,15 +69,8 @@ func (c *Consumer) UnsubscribeTopics(topics []string) error {
 }
 
 func (c *Consumer) ReadMessage(timeout time.Duration) (*Message, error) {
-	var timeoutMs int
-
-	if timeout > 0 {
-		timeoutMs = (int)(timeout.Seconds() * 1000.0)
-	} else {
-		timeoutMs = (int)(timeout)
-	}
 	for {
-		event := c.Poll(timeoutMs)
+		event := c.Poll()
 
 		switch e := event.(type) {
 		case *Message:
@@ -75,20 +80,28 @@ func (c *Consumer) ReadMessage(timeout time.Duration) (*Message, error) {
 		default:
 			// ignore everything else
 		}
-
-		if timeoutMs == 0 && event == nil {
-			return nil, newError(HYDRA_RESPONSE_TIMEOUT_ERROR)
-		}
 	}
 }
 
-func (c *Consumer) Poll(timeoutMs int) Event {
+func (c *Consumer) Poll() Event {
 	return <-c.events
 }
 
 func (c *Consumer) consumeAllTopics() {
+	wg := &sync.WaitGroup{}
+	for _, subscription := range c.subscriptions {
+		go func(subscription *ipfs.PubSubSubscription, wg *sync.WaitGroup) {
+			defer wg.Done()
+			wg.Add(1)
+			c.consumeTopic(subscription)
+		}(subscription, wg)
+	}
+	wg.Wait()
+}
+
+func (c *Consumer) consumeTopic(subscription *ipfs.PubSubSubscription) {
 	for {
-		record, err := c.subscription.Next()
+		record, err := subscription.Next()
 		if err == nil && sliceContainsSliceElement(c.topics, record.TopicIDs()) {
 			b := make([]byte, 8)
 			binary.LittleEndian.PutUint64(b, uint64(record.SeqNo()))

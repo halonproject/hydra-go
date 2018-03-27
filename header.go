@@ -3,8 +3,8 @@ package hydra
 import "fmt"
 
 type Header struct {
-	Key   string
-	Value []byte
+	Key   string `json:"key"`
+	Value []byte `json:"value"`
 }
 
 func NewHeader(key string, value []byte) Header {
