@@ -15,6 +15,35 @@ func TestNewConsumer(t *testing.T) {
 	}
 }
 
+func TestSubscribe(t *testing.T) {
+	consumer, err := defaultConsumer()
+	if err != nil {
+		t.Error("Error making default consumer:", err.Error())
+	}
+
+	err = consumer.Subscribe("foo")
+	if err != nil {
+		t.Error("Error subscribing to topic:", err.Error())
+	}
+}
+
+func TestUnsubscribe(t *testing.T) {
+	consumer, err := defaultConsumer()
+	if err != nil {
+		t.Error("Error making default consumer:", err.Error())
+	}
+
+	err = consumer.Subscribe("foo")
+	if err != nil {
+		t.Error("Error subscribing to topic:", err.Error())
+	}
+
+	err = consumer.Unsubscribe("foo")
+	if err != nil {
+		t.Error("Error unsubscribing from topic", err.Error())
+	}
+}
+
 func TestSliceContainsSliceElement(t *testing.T) {
 	array1 := []string{"one", "two", "three"}
 	array2 := []string{"aaa", "bbb", "three"}

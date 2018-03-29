@@ -25,9 +25,9 @@ Those standards include:
 
 ## TODO
 
-- [ ] Go docs
-- [ ] Unit/Coverage Testing
-- [ ] Create standards for message headers
+- [ ] Go docs (In Progress)
+- [ ] Unit/Coverage Testing (In Progress)
+- [ ] Create standards for message headers (In Progress)
 - [ ] Create standards for encrypted messages
 
 ## LICENSE

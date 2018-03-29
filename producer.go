@@ -20,13 +20,19 @@ func NewProducer(config *Config) *Producer {
 	return producer
 }
 
+func (p *Producer) Topics() []string {
+	return p.topics
+}
+
 func (p *Producer) AddTopic(topic string) {
 	p.AddTopics([]string{topic})
 }
 
 func (p *Producer) AddTopics(topics []string) {
 	for _, topic := range topics {
-		p.topics = append(p.topics, topic)
+		if !sliceContainsString(p.topics, topic) {
+			p.topics = append(p.topics, topic)
+		}
 	}
 }
 
@@ -35,19 +41,20 @@ func (p *Producer) RemoveTopic(topic string) {
 }
 
 func (p *Producer) RemoveTopics(topics []string) {
-	newTopics := make([]string, 0)
 	for _, topic := range topics {
-		for _, subscription := range p.topics {
-			if topic != subscription {
-				newTopics = append(newTopics, subscription)
+		for i, subscription := range p.topics {
+			if topic == subscription {
+				p.topics = append(p.topics[:i], p.topics[i+1:]...)
 			}
 		}
 	}
-
-	p.topics = newTopics
 }
 
 func (p *Producer) Produce(topic string, msg *Message) error {
+	if sliceContainsString(p.topics, topic) {
+		return fmt.Errorf("Cannot publish message to unsubscribed topic \"%s\"", topic)
+	}
+
 	msgBytes, err := msg.Encode()
 	if err != nil {
 		return err
@@ -72,4 +79,14 @@ func (p *Producer) ProduceAll(msg *Message) error {
 	}
 
 	return nil
+}
+
+func sliceContainsString(haystack []string, needle string) bool {
+	for _, stack := range haystack {
+		if stack == needle {
+			return true
+		}
+	}
+
+	return false
 }

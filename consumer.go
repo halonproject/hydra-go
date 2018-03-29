@@ -30,6 +30,10 @@ func NewConsumer(config *Config) (*Consumer, error) {
 	return consumer, nil
 }
 
+func (c *Consumer) Topics() []string {
+	return c.topics
+}
+
 func (c *Consumer) Subscribe(topic string) error {
 	return c.SubscribeTopics([]string{topic})
 }
@@ -52,20 +56,21 @@ func (c *Consumer) Unsubscribe(topic string) error {
 }
 
 func (c *Consumer) UnsubscribeTopics(topics []string) error {
-	newTopics := make([]string, 0)
+	var err error
 	for _, topic := range topics {
-		for _, ctopic := range c.topics {
-			if topic != ctopic {
-				newTopics = append(newTopics, ctopic)
+		for i, ctopic := range c.topics {
+			if topic == ctopic {
+				c.topics = append(c.topics[:i], c.topics[i+1:]...)
 			} else {
-				c.subscriptions[topic].Cancel()
-				delete(c.subscriptions, topic)
+				if c.subscriptions[topic] != nil {
+					err = c.subscriptions[topic].Cancel()
+					delete(c.subscriptions, topic)
+				}
 			}
 		}
 	}
 
-	c.topics = newTopics
-	return nil
+	return err
 }
 
 func (c *Consumer) ReadMessage(timeout time.Duration) (*Message, error) {
