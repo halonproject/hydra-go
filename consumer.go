@@ -19,7 +19,7 @@ type Consumer struct {
 
 func NewConsumer(config *Config) (*Consumer, error) {
 	consumer := &Consumer{}
-	dsn := fmt.Sprintf("https://%s:%s", config.IPFSAddr, config.IPFSPort)
+	dsn := fmt.Sprintf("http://%s:%s", config.IPFSAddr, config.IPFSPort)
 
 	shell := ipfs.NewShell(dsn)
 	consumer.conn = shell
@@ -61,12 +61,12 @@ func (c *Consumer) UnsubscribeTopics(topics []string) error {
 		for i, ctopic := range c.topics {
 			if topic == ctopic {
 				c.topics = append(c.topics[:i], c.topics[i+1:]...)
-			} else {
-				if c.subscriptions[topic] != nil {
-					err = c.subscriptions[topic].Cancel()
-					delete(c.subscriptions, topic)
-				}
 			}
+			if c.subscriptions[topic] != nil {
+				err = c.subscriptions[topic].Cancel()
+				delete(c.subscriptions, topic)
+			}
+
 		}
 	}
 
@@ -74,18 +74,18 @@ func (c *Consumer) UnsubscribeTopics(topics []string) error {
 }
 
 func (c *Consumer) ReadMessage(timeout time.Duration) (*Message, error) {
-	for {
-		event := c.Poll()
+	event := c.Poll()
 
-		switch e := event.(type) {
-		case *Message:
-			return e, nil
-		case *Error:
-			return nil, errors.New(e.reason)
-		default:
-			// ignore everything else
-		}
+	switch e := event.(type) {
+	case *Message:
+		return e, nil
+	case *Error:
+		return nil, errors.New(e.reason)
+	default:
+		// ignore everything else
 	}
+
+	return nil, nil
 }
 
 func (c *Consumer) Poll() Event {

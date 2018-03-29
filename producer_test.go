@@ -80,3 +80,36 @@ func TestRemoveTopics(t *testing.T) {
 		t.Error("Producer should have 0 topics but has", topics)
 	}
 }
+
+func TestProduce(t *testing.T) {
+	producer := defaultProducer()
+
+	producer.AddTopic("foo")
+
+	msg := NewMessage([]byte("test"), []byte("test_message"), nil)
+	err := producer.Produce(producer.Topics()[0], msg)
+
+	if err != nil {
+		t.Error("Error publishing message to 'foo' channel", err.Error())
+	}
+
+	err = producer.Produce("bar", msg)
+
+	if err == nil {
+		t.Error("Should have a non-nil error, cannot publish message to non-subscribed topic")
+	}
+}
+
+func TestProduceAll(t *testing.T) {
+	producer := defaultProducer()
+
+	producer.AddTopic("foo")
+	producer.AddTopic("bar")
+
+	msg := NewMessage([]byte("test"), []byte("test_message"), nil)
+	err := producer.ProduceAll(msg)
+
+	if err != nil {
+		t.Error("Error producing message to all topics:", err.Error())
+	}
+}

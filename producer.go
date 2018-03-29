@@ -12,7 +12,7 @@ type Producer struct {
 }
 
 func NewProducer(config *Config) *Producer {
-	dsn := fmt.Sprintf("https://%s:%s", config.IPFSAddr, config.IPFSPort)
+	dsn := fmt.Sprintf("http://%s:%s", config.IPFSAddr, config.IPFSPort)
 	producer := &Producer{
 		topics: config.Topics,
 		conn:   ipfs.NewShell(dsn),
@@ -51,7 +51,7 @@ func (p *Producer) RemoveTopics(topics []string) {
 }
 
 func (p *Producer) Produce(topic string, msg *Message) error {
-	if sliceContainsString(p.topics, topic) {
+	if !sliceContainsString(p.topics, topic) {
 		return fmt.Errorf("Cannot publish message to unsubscribed topic \"%s\"", topic)
 	}
 

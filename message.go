@@ -7,10 +7,10 @@ import (
 )
 
 type Message struct {
-	Value     []byte    `json:"value"`
-	Key       []byte    `json:"key"`
-	Timestamp time.Time `json:"timestamp"`
-	Headers   []Header  `json:"headers"`
+	Value     []byte   `json:"value"`
+	Key       []byte   `json:"key"`
+	Timestamp int64    `json:"timestamp"`
+	Headers   []Header `json:"headers"`
 }
 
 func NewMessage(key, value []byte, headers []Header) *Message {
@@ -18,12 +18,12 @@ func NewMessage(key, value []byte, headers []Header) *Message {
 		Key:       key,
 		Value:     value,
 		Headers:   headers,
-		Timestamp: time.Now(),
+		Timestamp: time.Now().Unix(),
 	}
 }
 
 func (msg *Message) String() string {
-	return fmt.Sprintf("%s: [%s=%s]", msg.Timestamp, msg.Key, msg.Value)
+	return fmt.Sprintf("%d: [%s=%s]", msg.Timestamp, msg.Key, msg.Value)
 }
 
 func (msg *Message) Encode() ([]byte, error) {
@@ -45,7 +45,7 @@ func (msg *Message) Decode() (interface{}, error) {
 		}
 	}
 
-	return nil, nil
+	return msg.Value, nil
 }
 
 // decodeJSON will attempt to take the raw message value and unmarshall it into

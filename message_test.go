@@ -17,10 +17,12 @@ func TestMessageEncode(t *testing.T) {
 	header := NewHeader("hello", []byte("world"))
 	message := NewMessage([]byte("foo"), []byte("bar"), []Header{header})
 
-	_, err := message.Encode()
+	msgBytes, err := message.Encode()
 	if err != nil {
 		t.Error("Error encoding message")
 	}
+
+	t.Log(msgBytes)
 }
 
 func TestMessageDecodeJSONMap(t *testing.T) {
