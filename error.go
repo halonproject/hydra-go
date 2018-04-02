@@ -2,7 +2,10 @@ package hydra
 
 import "fmt"
 
-const HYDRA_RESPONSE_TIMEOUT_ERROR = iota + 1
+const (
+	HYDRA_IPFS_READ_RECORD_ERROR = iota
+	HYDRA_RECORD_UNMARSHAL_ERROR = iota
+)
 
 // Error represent a general error returned from the reading or writing of a message
 // to IPFS pubsub.
@@ -12,10 +15,10 @@ type Error struct {
 }
 
 // newError returns a new error with an error code provided and a blank reason.
-func newError(code int) Error {
+func newError(code int, reason string) Error {
 	return Error{
 		code:   code,
-		reason: "",
+		reason: reason,
 	}
 }
 

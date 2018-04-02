@@ -136,12 +136,14 @@ func (c *Consumer) consumeTopic(subscription *ipfs.PubSubSubscription) {
 	for {
 		record, err := subscription.Next()
 		if err != nil {
+			c.events <- newError(HYDRA_IPFS_READ_RECORD_ERROR, err.Error())
 			continue
 		}
 
 		var msg Message
 		err = json.Unmarshal(record.Data(), &msg)
 		if err != nil {
+			c.events <- newError(HYDRA_RECORD_UNMARSHAL_ERROR, err.Error())
 			continue
 		}
 

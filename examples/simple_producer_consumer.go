@@ -51,7 +51,7 @@ loop:
 		decoded, err := message.Decode()
 		switch decoded.(type) {
 		case []byte:
-			fmt.Printf("%+v\n", string(decoded.([]byte)))
+			fmt.Printf("Consumed message: %+v\n", string(decoded.([]byte)))
 		}
 	}
 
