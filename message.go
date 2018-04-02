@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Message is a generic message that is sent through a topic via IPFS pubsub.
 type Message struct {
 	Value     []byte   `json:"value"`
 	Key       []byte   `json:"key"`
@@ -13,6 +14,7 @@ type Message struct {
 	Headers   []Header `json:"headers"`
 }
 
+// NewMessage creates a new message with key, value and any Headers needed
 func NewMessage(key, value []byte, headers []Header) *Message {
 	return &Message{
 		Key:       key,
@@ -22,14 +24,18 @@ func NewMessage(key, value []byte, headers []Header) *Message {
 	}
 }
 
+// String returns a string representation of a message to conform to Event interface
 func (msg *Message) String() string {
 	return fmt.Sprintf("%d: [%s=%s]", msg.Timestamp, msg.Key, msg.Value)
 }
 
+// Encode return the json marshalled message and an error if one occurred
 func (msg *Message) Encode() ([]byte, error) {
 	return json.Marshal(msg)
 }
 
+// Decode returns a decoded message as an interface. It will attempt to un-encode
+// the message value depending on the headers that were sent on the message.
 func (msg *Message) Decode() (interface{}, error) {
 	for _, header := range msg.Headers {
 		key := header.Key

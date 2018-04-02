@@ -29,6 +29,7 @@ Those standards include:
 - [ ] Unit/Coverage Testing (In Progress)
 - [ ] Create standards for message headers (In Progress)
 - [ ] Create standards for encrypted messages
+- [ ] Create simple usage examples
 
 ## LICENSE
 
