@@ -3,8 +3,9 @@ package hydra
 import "fmt"
 
 const (
-	HYDRA_IPFS_READ_RECORD_ERROR = iota
+	HYDRA_IPFS_READ_RECORD_ERROR = iota + 1
 	HYDRA_RECORD_UNMARSHAL_ERROR = iota
+	HYDRA_RESPONSE_TIMEOUT_ERROR = iota
 )
 
 // Error represent a general error returned from the reading or writing of a message
