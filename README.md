@@ -1,5 +1,6 @@
 # hydra-go
 
+[![GoDoc](https://godoc.org/github.com/halonproject/hydra-go?status.svg)](https://godoc.org/github.com/halonproject/hydra-go)
 [![CircleCI](https://circleci.com/gh/HalonProject/hydra-go.svg?style=svg)](https://circleci.com/gh/HalonProject/hydra-go)
 [![Coverage Status](https://coveralls.io/repos/github/HalonProject/hydra-go/badge.svg)](https://coveralls.io/github/HalonProject/hydra-go)
 
