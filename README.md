@@ -18,7 +18,7 @@ Those standards include:
 
 - Application specific messages:
   - JSON
-  - XML
+  - Protobuf
 - Encrypted messages
   - AES
   - Asymmetric Encryption
