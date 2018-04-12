@@ -26,8 +26,11 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
-      - run: docker run -d -p 5001:5001 ipfs/go-ipfs:latest
-      - run: go test -v ./...
+      - run:
+          name: Test
+          command: |
+            docker run -d -p 5001:5001 ipfs/go-ipfs:latest
+            go test -v ./...
       - run:
           name: Coverage
           command: |
