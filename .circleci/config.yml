@@ -30,6 +30,7 @@ jobs:
           name: Test
           command: |
             docker run -d -p 5001:5001 ipfs/go-ipfs:latest
+            docker ps
             go test -v ./...
       - run:
           name: Coverage
