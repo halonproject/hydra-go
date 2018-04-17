@@ -17,6 +17,8 @@ type Consumer struct {
 	topics        []string
 	conn          *ipfs.Shell
 	subscriptions map[string]*ipfs.PubSubSubscription
+	consuming     bool
+	wg            sync.WaitGroup
 }
 
 // NewConsumer creates a new consumer that is connected to a IPFS client via the
@@ -30,6 +32,8 @@ func NewConsumer(config *Config) (*Consumer, error) {
 	consumer.subscriptions = make(map[string]*ipfs.PubSubSubscription)
 	consumer.topics = config.Topics
 	consumer.events = make(chan Event, 10000)
+	consumer.consuming = false
+	consumer.wg = sync.WaitGroup{}
 
 	return consumer, nil
 }
@@ -49,12 +53,22 @@ func (c *Consumer) Subscribe(topic string) error {
 // from.
 func (c *Consumer) SubscribeTopics(topics []string) error {
 	for _, topic := range topics {
+		if sliceContainsString(c.topics, topic) {
+			continue
+		}
+
 		c.topics = append(c.topics, topic)
 		subscription, err := c.conn.PubSubSubscribe(topic)
 		if err != nil {
 			return err
 		}
 		c.subscriptions[topic] = subscription
+
+		// start consuming topic if we have started reading messsages already
+		if c.consuming {
+			c.wg.Add(1)
+			go c.consumeTopic(subscription)
+		}
 	}
 
 	return nil
@@ -112,21 +126,26 @@ func (c *Consumer) Poll() Event {
 // consumer is subscribed to. This needs to be called before attempting to read
 // any messages.
 func (c *Consumer) Start() {
+	c.consuming = true
 	go c.consumeAllTopics()
+}
+
+// Stop will stop the consumer from reading any more messages from the topics that
+// it is subscribed to.
+func (c *Consumer) Stop() {
+	c.consuming = false
 }
 
 // consumeAllTopics is an internal function that starts the consumption of messages
 // from all topics that the consumer is subscribed to.
 func (c *Consumer) consumeAllTopics() {
-	wg := &sync.WaitGroup{}
 	for _, subscription := range c.subscriptions {
-		go func(subscription *ipfs.PubSubSubscription, wg *sync.WaitGroup) {
-			defer wg.Done()
-			wg.Add(1)
+		go func(subscription *ipfs.PubSubSubscription) {
+			c.wg.Add(1)
 			c.consumeTopic(subscription)
-		}(subscription, wg)
+		}(subscription)
 	}
-	wg.Wait()
+	c.wg.Wait()
 }
 
 // consumeTopic is a helper function to pull the next message in a IPFS pubsub
@@ -134,6 +153,9 @@ func (c *Consumer) consumeAllTopics() {
 // or by the ReadMessage function.
 func (c *Consumer) consumeTopic(subscription *ipfs.PubSubSubscription) {
 	for {
+		if !c.consuming {
+			break
+		}
 		record, err := subscription.Next()
 		if err != nil {
 			c.events <- newError(HYDRA_IPFS_READ_RECORD_ERROR, err.Error())
@@ -149,6 +171,8 @@ func (c *Consumer) consumeTopic(subscription *ipfs.PubSubSubscription) {
 
 		c.events <- &msg
 	}
+
+	c.wg.Done()
 }
 
 // sliceContainsSliceElement determines if a slice of strings contains at least
