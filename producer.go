@@ -2,24 +2,21 @@ package hydra
 
 import (
 	"fmt"
-
-	ipfs "github.com/ipfs/go-ipfs-api"
 )
 
 // Producer is a high level message producer that publishes messages to a single
 // or multiple topics on IPFS pubsub.
 type Producer struct {
 	topics []string
-	conn   *ipfs.Shell
+	client IPFSClient
 }
 
 // NewProducer creates a new producer connected to a IPFS client specified in the
 // configuration.
-func NewProducer(config *Config) *Producer {
-	dsn := fmt.Sprintf("http://%s:%s", config.IPFSAddr, config.IPFSPort)
+func NewProducer(client IPFSClient, config *Config) *Producer {
 	producer := &Producer{
 		topics: config.Topics,
-		conn:   ipfs.NewShell(dsn),
+		client: client,
 	}
 	return producer
 }
@@ -73,7 +70,7 @@ func (p *Producer) Produce(topic string, msg *Message) error {
 		return err
 	}
 
-	err = p.conn.PubSubPublish(topic, string(msgBytes))
+	err = p.client.PubSubPublish(topic, string(msgBytes))
 
 	return err
 }
@@ -87,7 +84,7 @@ func (p *Producer) ProduceAll(msg *Message) error {
 	}
 
 	for _, topic := range p.topics {
-		err = p.conn.PubSubPublish(topic, string(msgBytes))
+		err = p.client.PubSubPublish(topic, string(msgBytes))
 		if err != nil {
 			return err
 		}

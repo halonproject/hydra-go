@@ -5,7 +5,7 @@ import "testing"
 func defaultProducer() *Producer {
 	config := DefaultConfig()
 
-	return NewProducer(config)
+	return NewProducer(newMockIPFSClient(), config)
 }
 
 func TestSliceContainsString(t *testing.T) {

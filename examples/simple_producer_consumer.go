@@ -6,15 +6,17 @@ import (
 	"time"
 
 	hydra "github.com/halonproject/hydra-go"
+	ipfs "github.com/ipfs/go-ipfs-api"
 )
 
 var topics = []string{"topic_1", "topic_2"}
 
 func main() {
 	config := hydra.DefaultConfig()
+	shell := ipfs.NewShell("localhost:5001")
 
-	producer := hydra.NewProducer(config)
-	consumer, err := hydra.NewConsumer(config)
+	producer := hydra.NewProducer(shell, config)
+	consumer, err := hydra.NewConsumer(shell, config)
 	if err != nil {
 		fmt.Println("Error creating consumer", err.Error())
 	}

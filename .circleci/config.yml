@@ -29,7 +29,6 @@ jobs:
       - run:
           name: Test
           command: |
-            docker run -d -p 5001:5001 ipfs/go-ipfs:latest --enable-pubsub-experiment
             go test -v ./...
       - run:
           name: Coverage
