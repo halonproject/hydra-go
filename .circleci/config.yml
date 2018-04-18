@@ -30,13 +30,3 @@ jobs:
           name: Test
           command: |
             go test -v ./...
-      - run:
-          name: Coverage
-          command: |
-            go get github.com/mattn/goveralls
-            touch /tmp/artifacts/coverage.out
-            go test -v -cover -race -coverprofile=/tmp/artifacts/coverage.out
-            $GOPATH/bin/goveralls -coverprofile=/tmp/artifacts/coverage.out -service=circle-ci -repotoken=$COVERALLS_REPO_TOKEN
-
-      - store_artifacts:
-          path: /tmp/artifacts
