@@ -1,11 +1,13 @@
 package hydra
 
-import "testing"
+import (
+	"testing"
+)
 
 func defaultConsumer() (*Consumer, error) {
 	config := DefaultConfig()
 
-	return NewConsumer(config)
+	return NewConsumer(newMockIPFSClient(), config)
 }
 
 func TestNewConsumer(t *testing.T) {
@@ -27,22 +29,22 @@ func TestSubscribe(t *testing.T) {
 	}
 }
 
-func TestUnsubscribe(t *testing.T) {
-	consumer, err := defaultConsumer()
-	if err != nil {
-		t.Error("Error making default consumer:", err.Error())
-	}
-
-	err = consumer.Subscribe("foo")
-	if err != nil {
-		t.Error("Error subscribing to topic:", err.Error())
-	}
-
-	err = consumer.Unsubscribe("foo")
-	if err != nil {
-		t.Error("Error unsubscribing from topic", err.Error())
-	}
-}
+// func TestUnsubscribe(t *testing.T) {
+// 	consumer, err := defaultConsumer()
+// 	if err != nil {
+// 		t.Error("Error making default consumer:", err.Error())
+// 	}
+//
+// 	err = consumer.Subscribe("foo")
+// 	if err != nil {
+// 		t.Error("Error subscribing to topic:", err.Error())
+// 	}
+//
+// 	err = consumer.Unsubscribe("foo")
+// 	if err != nil {
+// 		t.Error("Error unsubscribing from topic", err.Error())
+// 	}
+// }
 
 func TestSliceContainsSliceElement(t *testing.T) {
 	array1 := []string{"one", "two", "three"}
@@ -60,3 +62,18 @@ func TestSliceContainsSliceElement(t *testing.T) {
 		t.Error("haystack should NOT contain needles")
 	}
 }
+
+// func TestConsumeStart(t *testing.T) {
+// 	consumer, err := defaultConsumer()
+// 	if err != nil {
+// 		t.Error("Error making default consumer:", err.Error())
+// 	}
+//
+// 	consumer.SubscribeTopics([]string{"foo", "bar"})
+//
+// 	consumer.Start()
+//
+// 	time.Sleep(time.Second * 5)
+//
+// 	consumer.Stop()
+// }

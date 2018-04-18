@@ -26,15 +26,8 @@ Those standards include:
 
 ## Testing
 
-In order to do any testing you will have to have an IPFS client that you can
-connect to that has pubsub enabled. You can run one locally by running the following
-command:
 
-```
-$ ipfs daemon --enable-pubsub-experiment
-```
-
-In another terminal you can then run all tests:
+In your terminal you can run all tests by using the following:
 
 ```
 $ go test
