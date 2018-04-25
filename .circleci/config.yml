@@ -29,11 +29,4 @@ jobs:
       - run:
           name: Test
           command: |
-            docker run -d -p 5001:5001 ipfs/go-ipfs:latest --enable-pubsub-experiment
             go test -v ./...
-      - run:
-          name: Coverage
-          command: |
-            go get github.com/mattn/goveralls
-            go test -v -cover -race -coverprofile=/home/coverage.out
-            $GOPATH/bin/goveralls -coverprofile=/home/coverage.out -service=circle-ci -repotoken=$COVERALLS_REPO_TOKEN

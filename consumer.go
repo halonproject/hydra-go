@@ -3,7 +3,6 @@ package hydra
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"sync"
 
@@ -18,7 +17,7 @@ import (
 type Consumer struct {
 	events        chan Event
 	topics        []string
-	conn          *ipfs.Shell
+	client        IPFSClient
 	subscriptions map[string]*ipfs.PubSubSubscription
 	consuming     bool
 	wg            sync.WaitGroup
@@ -26,12 +25,10 @@ type Consumer struct {
 
 // NewConsumer creates a new consumer that is connected to a IPFS client via the
 // configuration passed and also is subscribed to any topics set in the config.
-func NewConsumer(config *Config) (*Consumer, error) {
+func NewConsumer(client IPFSClient, config *Config) (*Consumer, error) {
 	consumer := &Consumer{}
-	dsn := fmt.Sprintf("http://%s:%s", config.IPFSAddr, config.IPFSPort)
 
-	shell := ipfs.NewShell(dsn)
-	consumer.conn = shell
+	consumer.client = client
 	consumer.subscriptions = make(map[string]*ipfs.PubSubSubscription)
 	consumer.topics = config.Topics
 	consumer.events = make(chan Event, 10000)
@@ -61,7 +58,7 @@ func (c *Consumer) SubscribeTopics(topics []string) error {
 		}
 
 		c.topics = append(c.topics, topic)
-		subscription, err := c.conn.PubSubSubscribe(topic)
+		subscription, err := c.client.PubSubSubscribe(topic)
 		if err != nil {
 			return err
 		}
@@ -181,6 +178,7 @@ func (c *Consumer) consumeTopic(subscription *ipfs.PubSubSubscription) {
 		c.events <- msg
 	}
 
+	subscription.Cancel()
 	c.wg.Done()
 }
 
