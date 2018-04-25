@@ -2,6 +2,9 @@ package hydra
 
 import (
 	"fmt"
+
+	"github.com/gogo/protobuf/proto"
+	message "github.com/halonproject/hydra-proto-go"
 )
 
 // Producer is a high level message producer that publishes messages to a single
@@ -60,12 +63,12 @@ func (p *Producer) RemoveTopics(topics []string) {
 
 // Produce will publish a message to a specific topic on IPFS. If the topic provided
 // is not in producers list of subscribed topics it will throw an error.
-func (p *Producer) Produce(topic string, msg *Message) error {
+func (p *Producer) Produce(topic string, msg *message.Message) error {
 	if !sliceContainsString(p.topics, topic) {
 		return fmt.Errorf("Cannot publish message to unsubscribed topic \"%s\"", topic)
 	}
 
-	msgBytes, err := msg.Encode()
+	msgBytes, err := proto.Marshal(msg)
 	if err != nil {
 		return err
 	}
@@ -77,8 +80,8 @@ func (p *Producer) Produce(topic string, msg *Message) error {
 
 // ProduceAll will publish a message to all of the topics that the producer is
 // subscribed to.
-func (p *Producer) ProduceAll(msg *Message) error {
-	msgBytes, err := msg.Encode()
+func (p *Producer) ProduceAll(msg *message.Message) error {
+	msgBytes, err := proto.Marshal(msg)
 	if err != nil {
 		return err
 	}
