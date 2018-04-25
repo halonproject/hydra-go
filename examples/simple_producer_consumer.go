@@ -50,10 +50,9 @@ loop:
 			fmt.Println("Error reading message:", err.Error())
 		}
 
-		decoded, err := message.Decode()
-		switch decoded.(type) {
-		case []byte:
-			fmt.Printf("Consumed message: %+v\n", string(decoded.([]byte)))
+		decoded := message.String()
+		if decoded == "" {
+			fmt.Println("Error: message should not be empty")
 		}
 	}
 
