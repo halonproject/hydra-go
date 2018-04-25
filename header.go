@@ -1,6 +1,8 @@
 package hydra
 
-import "fmt"
+import (
+	message "github.com/halonproject/hydra-proto-go"
+)
 
 // Header represents a key-value pair that stores meta data about a message.
 type Header struct {
@@ -9,11 +11,6 @@ type Header struct {
 }
 
 // NewHeader creates a new Header with key and value
-func NewHeader(key string, value []byte) Header {
-	return Header{Key: key, Value: value}
-}
-
-// String returns a string representation of a header
-func (h Header) String() string {
-	return fmt.Sprintf("%s=%s", h.Key, h.Value)
+func NewHeader(key string, value []byte) *message.Header {
+	return &message.Header{Key: key, Value: value}
 }

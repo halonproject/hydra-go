@@ -1,11 +1,14 @@
 package hydra
 
 import (
-	"encoding/json"
+	"bytes"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"sync"
 
+	"github.com/gogo/protobuf/proto"
+	message "github.com/halonproject/hydra-proto-go"
 	ipfs "github.com/ipfs/go-ipfs-api"
 )
 
@@ -162,14 +165,20 @@ func (c *Consumer) consumeTopic(subscription *ipfs.PubSubSubscription) {
 			continue
 		}
 
-		var msg Message
-		err = json.Unmarshal(record.Data(), &msg)
+		reader := bytes.NewReader(record.Data())
+		in, err := ioutil.ReadAll(reader)
+		if err != nil {
+			c.events <- newError(HYDRA_IPFS_READ_RECORD_ERROR, err.Error())
+		}
+
+		var msg *message.Message
+		err = proto.Unmarshal(in, msg)
 		if err != nil {
 			c.events <- newError(HYDRA_RECORD_UNMARSHAL_ERROR, err.Error())
 			continue
 		}
 
-		c.events <- &msg
+		c.events <- msg
 	}
 
 	c.wg.Done()
