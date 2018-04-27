@@ -102,11 +102,11 @@ func (c *Consumer) UnsubscribeTopics(topics []string) error {
 
 // ReadMessage will wait until there is a message from any one of the subscribed
 // topics and return that message.
-func (c *Consumer) ReadMessage() (*Message, error) {
+func (c *Consumer) ReadMessage() (*message.Message, error) {
 	event := <-c.events
 
 	switch e := event.(type) {
-	case *Message:
+	case *message.Message:
 		return e, nil
 	case *Error:
 		return nil, errors.New(e.reason)
@@ -166,9 +166,13 @@ func (c *Consumer) consumeTopic(subscription *ipfs.PubSubSubscription) {
 		in, err := ioutil.ReadAll(reader)
 		if err != nil {
 			c.events <- newError(HYDRA_IPFS_READ_RECORD_ERROR, err.Error())
+			continue
+		} else if len(in) == 0 {
+			c.events <- newError(HYDRA_ZERO_BYTES_RECIEVED_ERROR, "ipfs record contains no data")
+			continue
 		}
 
-		var msg *message.Message
+		msg := &message.Message{}
 		err = proto.Unmarshal(in, msg)
 		if err != nil {
 			c.events <- newError(HYDRA_RECORD_UNMARSHAL_ERROR, err.Error())

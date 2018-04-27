@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 
 	hydra "github.com/halonproject/hydra-go"
@@ -14,6 +15,11 @@ var topics = []string{"topic_1", "topic_2"}
 func main() {
 	config := hydra.DefaultConfig()
 	shell := ipfs.NewShell("localhost:5001")
+
+	if !shell.IsUp() {
+		fmt.Println("IPFS shell is not connected")
+		os.Exit(1)
+	}
 
 	producer := hydra.NewProducer(shell, config)
 	consumer, err := hydra.NewConsumer(shell, config)
@@ -48,12 +54,10 @@ loop:
 		message, err := consumer.ReadMessage()
 		if err != nil {
 			fmt.Println("Error reading message:", err.Error())
+			continue
 		}
 
-		decoded := message.String()
-		if decoded == "" {
-			fmt.Println("Error: message should not be empty")
-		}
+		fmt.Printf("Consumed message: %s\n", message.String())
 	}
 
 	fmt.Println("Done consuming...")
