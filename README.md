@@ -2,7 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/halonproject/hydra-go?status.svg)](https://godoc.org/github.com/halonproject/hydra-go)
 [![CircleCI](https://circleci.com/gh/halonproject/hydra-go.svg?style=svg)](https://circleci.com/gh/halonproject/hydra-go)
-[![Coverage Status](https://coveralls.io/repos/github/HalonProject/hydra-go/badge.svg)](https://coveralls.io/github/HalonProject/hydra-go)
+[![Coverage Status](https://coveralls.io/repos/github/HalonProject/hydra-go/badge.svg?branch=coverage)](https://coveralls.io/github/HalonProject/hydra-go?branch=coverage)
 
 Golang implementation of `hydra` which is a library for producing and consuming
 messages from multiple subscribed topics on IPFS.
