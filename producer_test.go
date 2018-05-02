@@ -1,11 +1,26 @@
 package hydra
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+
+	ipfs "github.com/ipfs/go-ipfs-api"
+)
 
 func defaultProducer() *Producer {
 	config := DefaultConfig()
 
 	return NewProducer(newMockIPFSClient(), config)
+}
+
+func productionProducer() (*Producer, error) {
+	if !ipfsIsRunning() {
+		return nil, fmt.Errorf("local IPFS node is not available")
+	}
+
+	config := DefaultConfig()
+	shell := ipfs.NewShell(fmt.Sprintf("%s:%s", config.IPFSAddr, config.IPFSPort))
+	return NewProducer(shell, config), nil
 }
 
 func TestSliceContainsString(t *testing.T) {
