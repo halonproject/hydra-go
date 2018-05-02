@@ -22,7 +22,7 @@ jobs:
       - checkout
 
       - setup_remote_docker:
-          docker_layer_caching: true
+          version: 17.05.0-ce
 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
@@ -33,8 +33,9 @@ jobs:
       - run:
           name: Coverage
           command: |
-              sudo docker pull ipfs/go-ipfs:latest
-              sudo docker run -d -p 5001:5001 ipfs/go-ipfs:latest --enable-pubsub-experiment
+              docker version
+              docker pull ipfs/go-ipfs:latest
+              docker run -d -p 5001:5001 ipfs/go-ipfs:latest --enable-pubsub-experiment
               go test -cover -coverprofile=coverage.txt
               go get github.com/mattn/goveralls
               goveralls -service=circleci -coverprofile=coverage.txt -repotoken=$COVERALLS_REPO_TOKEN
