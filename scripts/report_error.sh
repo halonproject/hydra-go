@@ -14,7 +14,9 @@ function report_error_to_github {
 
     echo $ERROR_MSG
 
-    printenv
+    if [ -z $CIRCLE_PR_NUMBER ]; then
+        CIRCLE_PR_NUMBER="${CIRCLE_PULL_REQUEST//[^0-9]/}"
+    fi
 
     post_error_to_github
 }
