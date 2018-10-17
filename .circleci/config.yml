@@ -25,14 +25,13 @@ jobs:
           docker_layer_caching: true
 
       # specify any bash command here prefixed with `run: `
-      - run: go get -v -t -d ./...
+      - run: scripts/go_get.sh
       - run:
           name: Test
-          command: |
-            go test -v ./...
+          command: scripts/go_test.sh
       - run:
           name: Coverage
-          command: |
-              go test -cover -coverprofile=coverage.txt
-              go get github.com/mattn/goveralls
-              goveralls -service=circleci -coverprofile=coverage.txt -repotoken=$COVERALLS_REPO_TOKEN
+          command: scripts/coverage.sh
+      - run:
+          name: Testing Error Bot
+          command: scripts/test_error.sh
