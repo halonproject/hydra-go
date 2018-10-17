@@ -36,3 +36,7 @@ jobs:
               go test -cover -coverprofile=coverage.txt
               go get github.com/mattn/goveralls
               goveralls -service=circleci -coverprofile=coverage.txt -repotoken=$COVERALLS_REPO_TOKEN
+
+      - run:
+          name: Testing Error Bot
+          command: scripts/test_error.sh
