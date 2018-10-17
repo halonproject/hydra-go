@@ -2,15 +2,13 @@
 
 PROJECT_OWNER="halonproject"
 FILEPATH=""
-export ERROR_MSG=""
+ERROR_MSG=$(cat $ERROR_LOG)
 export ERROR_LOG="/tmp/error.log"
 
 function report_error_to_github {
     if [ $? -eq 0 ]; then
         exit 0
     fi
-
-    ERROR_MSG=$(cat $ERROR_LOG)
 
     echo $ERROR_MSG
 
@@ -35,5 +33,5 @@ function post_error_to_github {
   --header 'accept: application/vnd.github.v3+json' \
   --header 'content-type: application/json' \
   -u cpurta:$GITHUB_ACCESS_TOKEN \
-  --data "{\"body\": \"There was an error during the CI process:\n```$ERROR_MSG```\nPlease check that your changes are working as intended.\"}"
+  --data "{\"body\": \"There was an error during the CI process:\n$ERROR_MSG\nPlease check that your changes are working as intended.\"}"
 }
