@@ -6,6 +6,4 @@ trap report_error_to_github EXIT
 
 set -e
 
-rm -r ./temp 2>$ERROR_LOG
-
-echo "we should not get to this line"
+go get -v -t -d ./... 2>$ERROR_LOG

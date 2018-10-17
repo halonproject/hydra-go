@@ -30,6 +30,6 @@ function post_error_to_github {
 	\"body\": \"$ERROR_MSG\",
 	\"commit_id\": \"$CIRCLE_SHA1\",
 	\"path\": \"$FILEPATH\",
-	\"position\": 0
+	\"position\": 1
 }"
 }
