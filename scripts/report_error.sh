@@ -34,6 +34,7 @@ function post_error_to_github {
   --url https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/issues/$CIRCLE_PR_NUMBER/comments \
   --header 'accept: application/vnd.github.v3+json' \
   --header 'content-type: application/json' \
+  -u cpurta:2b7c13aa2ad17369381926b1d23d343fb235b9fb
   --data "{
 	\"body\": \"There was an error during the CI process:
     ```
