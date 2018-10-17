@@ -28,16 +28,17 @@ function get_pull_request_diff {
 }
 
 function post_error_to_github {
-    echo "posting error message to https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls/$CIRCLE_PR_NUMBER/comments"
+    echo "posting error message to https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/issues/$CIRCLE_PR_NUMBER/comments"
 
     curl --request POST \
-  --url https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls/$CIRCLE_PR_NUMBER/comments \
+  --url https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/issues/$CIRCLE_PR_NUMBER/comments \
   --header 'accept: application/vnd.github.v3+json' \
   --header 'content-type: application/json' \
   --data "{
-	\"body\": \"$ERROR_MSG\",
-	\"commit_id\": \"$CIRCLE_SHA1\",
-	\"path\": \"\",
-	\"position\": 0
+	\"body\": \"There was an error during the CI process:
+    ```
+    $ERROR_MSG
+    ```
+    Please check that your changes are working as intended.\"
 }"
 }
