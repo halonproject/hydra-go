@@ -14,6 +14,8 @@ function report_error_to_github {
 
     echo $ERROR_MSG
 
+    printenv
+
     post_error_to_github
 }
 
