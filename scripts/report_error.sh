@@ -19,15 +19,15 @@ function report_error_to_github {
 
 function get_pull_request_diff {
     curl --request GET \
-  --url https://api.github.com/repos/$PROJECT_OWNER/$CIRCLE_PR_REPONAME/pulls/$CIRCLE_PR_NUMBER \
+  --url https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls/$CIRCLE_PR_NUMBER \
   --header 'accept: application/vnd.github.v3.diff'
 }
 
 function post_error_to_github {
-    echo "posting error message to https://api.github.com/repos/$PROJECT_OWNER/$CIRCLE_PR_REPONAME/pulls/$CIRCLE_PR_NUMBER/comments"
+    echo "posting error message to https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls/$CIRCLE_PR_NUMBER/comments"
 
     curl --request POST \
-  --url https://api.github.com/repos/$PROJECT_OWNER/$CIRCLE_PR_REPONAME/pulls/$CIRCLE_PR_NUMBER/comments \
+  --url https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/pulls/$CIRCLE_PR_NUMBER/comments \
   --header 'accept: application/vnd.github.v3+json' \
   --header 'content-type: application/json' \
   --data "{
