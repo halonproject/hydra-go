@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 PROJECT_OWNER="halonproject"
-ERROR_MSG=""
 FILEPATH=""
+export ERROR_MSG=""
 export ERROR_LOG="/tmp/error.log"
 
 function report_error_to_github {
