@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-PROJECT_OWNER="halonproject"
-FILEPATH=""
-ERROR_MSG=$(cat $ERROR_LOG)
 export ERROR_LOG="/tmp/error.log"
+ERROR_MSG=$(cat $ERROR_LOG)
 
 function report_error_to_github {
     if [ $? -eq 0 ]; then
@@ -26,10 +24,12 @@ function get_pull_request_diff {
 }
 
 function post_error_to_github {
-    echo "posting error message to https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/issues/$CIRCLE_PR_NUMBER/comments"
+    GITHUB_API_URL="https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/issues/$CIRCLE_PR_NUMBER/comments"
+
+    echo "posting error message to $GITHUB_API_URL"
 
     curl --request POST \
-  --url https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/issues/$CIRCLE_PR_NUMBER/comments \
+  --url $GITHUB_API_URL \
   --header 'accept: application/vnd.github.v3+json' \
   --header 'content-type: application/json' \
   -u cpurta:$GITHUB_ACCESS_TOKEN \
