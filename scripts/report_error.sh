@@ -35,5 +35,5 @@ function post_error_to_github {
   --header 'accept: application/vnd.github.v3+json' \
   --header 'content-type: application/json' \
   -u cpurta:$GITHUB_ACCESS_TOKEN \
-  --data "{\"body\": \"There was an error during the CI process:\n$ESCAPED_ERROR_MSG\nPlease check that your changes are working as intended.\"}"
+  --data "{\"body\": \"There was an error during the CI process:\n```\n$ESCAPED_ERROR_MSG\n```\nPlease check that your changes are working as intended.\"}"
 }
