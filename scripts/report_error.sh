@@ -28,10 +28,12 @@ function post_error_to_github {
 
     echo "posting error message to $GITHUB_API_URL"
 
+    ESCAPED_ERROR_MSG=$(echo $ERROR_MSG | sed 's/"/\\\"/g')
+
     curl --request POST \
   --url $GITHUB_API_URL \
   --header 'accept: application/vnd.github.v3+json' \
   --header 'content-type: application/json' \
   -u cpurta:$GITHUB_ACCESS_TOKEN \
-  --data "{\"body\": \"There was an error during the CI process:\n$ERROR_MSG\nPlease check that your changes are working as intended.\"}"
+  --data "{\"body\": \"There was an error during the CI process:\n$ESCAPED_ERROR_MSG\nPlease check that your changes are working as intended.\"}"
 }
