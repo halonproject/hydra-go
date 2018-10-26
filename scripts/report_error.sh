@@ -15,7 +15,7 @@ function report_error_to_github {
         echo "Errors found in files: ${FILES_FOUND[@]}"
     fi
 
-    if [[ ! -z $CIRCLE_JOB ]]; then
+    if [ ! -z $CIRCLE_JOB ]; then
         post_pull_request_comment
     fi
 }
@@ -57,5 +57,7 @@ function post_pull_request_comment {
   -u cpurta:$GITHUB_ACCESS_TOKEN \
   --data "{\"body\": \"There was an error during the CI process:\n\`\`\`\n$ESCAPED_ERROR_MSG\n\`\`\`\nPlease check that your changes are working as intended.\"}"
 }
+
+env
 
 trap report_error_to_github EXIT
