@@ -11,13 +11,13 @@ function report_error_to_github {
 
     echo $ERROR_MSG
 
-    FILES_FOUND=$(echo $ERROR_MSG | grep "[\w-]+\.[A-Za-z]{1,3}")
+    FILES_FOUND=$(echo $ERROR_MSG | grep -e '[\w-]+\.[A-Za-z]{1,3}')
 
     if [ ${#FILES_FOUND} -ne 0 ]; then
         echo "Errors found in files: ${FILES_FOUND[@]}"
     fi
 
-    if [[ ! -z $CI && $CI == "true" ]]; then
+    if [[ ! -z $CIRCLE_JOB ]]; then
         post_pull_request_comment
     fi
 }
