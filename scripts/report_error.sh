@@ -7,11 +7,7 @@ function report_error_to_github {
         exit 0
     fi
 
-    ERROR_MSG=$(cat $ERROR_LOG)
-
-    echo $ERROR_MSG
-
-    FILES_FOUND=$(echo $ERROR_MSG | grep -e '[\w-]+\.[A-Za-z]{1,3}')
+    FILES_FOUND=$(cat $ERROR_MSG | grep -e '[\w-]+\.[A-Za-z]{1,3}')
 
     if [ ${#FILES_FOUND} -ne 0 ]; then
         echo "Errors found in files: ${FILES_FOUND[@]}"
@@ -31,7 +27,7 @@ function post_pull_request_diff_comment {
 
     echo "posting error message to $GITHUB_API_URL"
 
-    ESCAPED_ERROR_MSG=$(echo $ERROR_MSG | sed 's/"/\\\"/g')
+    ESCAPED_ERROR_MSG=$(cat $ERROR_MSG | sed 's/"/\\\"/g')
 
     curl --request POST \
   --url $GITHUB_API_URL \
@@ -50,7 +46,7 @@ function post_pull_request_comment {
 
     echo "posting error message to $GITHUB_API_URL"
 
-    ESCAPED_ERROR_MSG=$(echo $ERROR_MSG | sed 's/"/\\\"/g')
+    ESCAPED_ERROR_MSG=$(cat $ERROR_MSG | sed 's/"/\\\"/g')
 
     curl --request POST \
   --url $GITHUB_API_URL \
