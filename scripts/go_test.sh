@@ -2,8 +2,6 @@
 
 . scripts/report_error.sh
 
-trap report_error_to_github EXIT
-
 set -e
 
-go test -v ./... 2>$ERROR_LOG
+go test -v ./... | tee -a $ERROR_LOG >&2
