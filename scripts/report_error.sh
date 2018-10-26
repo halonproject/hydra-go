@@ -3,17 +3,13 @@
 export ERROR_LOG="/tmp/error.log"
 
 function report_error_to_github {
+    echo "checking if an errored occurred in script"
+
     if [ $? -eq 0 ]; then
         exit 0
     fi
 
     cat $ERROR_LOG
-
-    FILES_FOUND=$(cat $ERROR_MSG | grep -e '[\w-]+\.[A-Za-z]{1,3}')
-
-    if [ ${#FILES_FOUND} -ne 0 ]; then
-        echo "Errors found in files: ${FILES_FOUND[@]}"
-    fi
 
     if [ ! -z $CIRCLE_JOB ]; then
         post_pull_request_comment
