@@ -7,6 +7,8 @@ function report_error_to_github {
         exit 0
     fi
 
+    cat $ERROR_LOG
+
     FILES_FOUND=$(cat $ERROR_MSG | grep -e '[\w-]+\.[A-Za-z]{1,3}')
 
     if [ ${#FILES_FOUND} -ne 0 ]; then

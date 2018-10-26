@@ -4,4 +4,4 @@
 
 set -e
 
-go get -v -t -d ./... | tee -a $ERROR_LOG >&2
+go get -v -t -d ./... 2>$ERROR_LOG

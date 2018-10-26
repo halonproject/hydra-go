@@ -4,4 +4,4 @@
 
 set -e
 
-go test -v ./... | tee -a $ERROR_LOG >&2
+go test -v ./... 2>$ERROR_LOG
